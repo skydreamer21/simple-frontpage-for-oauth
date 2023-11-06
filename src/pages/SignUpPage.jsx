@@ -20,7 +20,7 @@ const SignUpPage = () => {
 
   function handleSubmit() {
     axios
-      .put("http://localhost:8080/api/v1/members/health", {
+      .put("http://localhost:8080/api/v1/members/register", {
         memberId: memberId,
         birthYear: birthYear,
         gender: gender,
