@@ -2,9 +2,10 @@
 const LOGIN = "MEMBER/LOGIN";
 
 // action 생성 함수 정의
-const memberLogin = (memberId, accessToken, refreshToken) => ({
+const memberLogin = (memberId, memberName, accessToken, refreshToken) => ({
   type: LOGIN,
   memberId,
+  memberName,
   accessToken,
   refreshToken,
 });
@@ -13,6 +14,7 @@ const memberLogin = (memberId, accessToken, refreshToken) => ({
 const initialState = {
   isLogin: false,
   memberId: undefined,
+  memberName: undefined,
   accessToken: undefined,
   refreshToken: undefined,
 };
@@ -24,6 +26,7 @@ function memberReducer(state = initialState, action) {
         ...state,
         isLogin: true,
         memberId: action.memberId,
+        memberName: action.memberName,
         accessToken: action.accessToken,
         refreshToken: action.refreshToken,
       };

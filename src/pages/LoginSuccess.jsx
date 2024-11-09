@@ -13,28 +13,33 @@ const LoginSuccess = () => {
   const [searchParams] = useSearchParams();
   const authToken = searchParams.get("token");
   const provider = searchParams.get("provider");
-  console.log(searchParams);
+  // console.log(searchParams);
+  console.log(provider)
+
+  const devBaseUrl = "http://localhost:8080";
+  // const devBaseUrl = "https://app.testsvc-avl87.store";
 
   useEffect(() => {
     axios
-      .post("http://localhost:8080/api/v1/auth", {
+      .post(devBaseUrl+"/api/v1/auth", {
         authToken: authToken,
         oauthProvider: provider,
       })
-      .then(({ data }) => {
+      .then(({data}) => {
         console.log(data);
-        const memberId = data.results.memberId;
-        if (data.results.isNewMember) {
-          navigate("/sign-up", {
+        const memberId = data.memberId
+        if (data.isNewMember) {
+          navigate("/", {
             state: {
               memberId: memberId,
             },
           });
         } else {
-          const result = data.results;
+          const result = data;
           dispatch(
             memberLogin(
               result.memberId,
+              result.memberName,
               result.accessToken,
               result.refreshToken
             )
@@ -43,7 +48,7 @@ const LoginSuccess = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.response.data);
       });
   }, []);
 

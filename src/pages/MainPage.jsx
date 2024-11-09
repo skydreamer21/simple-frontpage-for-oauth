@@ -6,11 +6,14 @@ import axios from "axios";
 
 const MainPage = () => {
   const dispatch = useDispatch();
-  const memberId = useSelector((state) => state.memberReducer.memberId);
+  const memberName = useSelector((state) => state.memberReducer.memberName);
   const accessToken = useSelector((state) => state.memberReducer.accessToken);
   const refreshToken = useSelector((state) => state.memberReducer.refreshToken);
-  const BASE_URL = "http://localhost:8080";
-  const API_PREFIX = BASE_URL + "/api/v1";
+  // const BASE_URL = "http://localhost:8080";
+  const localBaseUrl = "http://localhost:8080";
+  // const devBaseUrl = "https://app.testsvc-avl87.store";
+  const devBaseUrl = "http://localhost:8080";
+  const API_PREFIX = devBaseUrl + "/api/v1";
   const EXPIRED_ERROR_CODE = "ERR_AUTH_005";
   const AUTHORIZATION_HEADER = {
     headers: {
@@ -26,7 +29,7 @@ const MainPage = () => {
   console.log(accessToken);
 
   function handleLogin() {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = devBaseUrl+ "/security/oauth2/authorization/kakao";
   }
 
   function handleTest() {
@@ -88,11 +91,49 @@ const MainPage = () => {
       });
   }
 
+  function handleSamplePostAPI() {
+    axios.post(
+      API_PREFIX + "/sample",
+      {}
+    )
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+    })
+  }
+
+  function handleSampleErrorAPI() {
+    axios.get(
+      API_PREFIX + "/sample/error",
+    )
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+    })
+  }
+
+  function handleAuthReqAPI() {
+    axios.get(
+      API_PREFIX + "/sample-auth",
+      AUTHORIZATION_HEADER
+    )
+    .then((data) => {
+      console.log(data);
+    })
+    .catch(({response}) => {
+      console.log(response.data);
+    })
+  }
+
   return (
     <div>
       <h1>Main Page 입니다.</h1>
-      {memberId && <div>안녕하세요 {memberId}님</div>}
-      {memberId ? (
+      {memberName && <div>안녕하세요 {memberName}님</div>}
+      {memberName ? (
         <div>
           <div onClick={handleLogout}>Logout</div>
           <div onClick={handleTest}>test</div>
@@ -100,6 +141,9 @@ const MainPage = () => {
       ) : (
         <div onClick={handleLogin}>Login</div>
       )}
+      <div onClick={handleSamplePostAPI}>testPostAPI</div>
+      <div onClick={handleSampleErrorAPI}>testErrorAPI</div>
+      <div onClick={handleAuthReqAPI}>testAuthReqAPI</div>
     </div>
   );
 };
