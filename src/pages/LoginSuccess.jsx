@@ -16,8 +16,7 @@ const LoginSuccess = () => {
   // console.log(searchParams);
   console.log(provider)
 
-  const devBaseUrl = "http://localhost:8080";
-  // const devBaseUrl = "https://app.testsvc-avl87.store";
+  const devBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
     axios

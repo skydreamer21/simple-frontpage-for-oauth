@@ -1,7 +1,7 @@
 import { useState } from "react";
 import rootReducer from "../reducers";
 import { useSelector, useDispatch } from "react-redux";
-import { memberLogin } from "../reducers/memberReducer";
+import { memberLogin, memberLogout } from "../reducers/memberReducer";
 import axios from "axios";
 
 const MainPage = () => {
@@ -9,10 +9,7 @@ const MainPage = () => {
   const memberName = useSelector((state) => state.memberReducer.memberName);
   const accessToken = useSelector((state) => state.memberReducer.accessToken);
   const refreshToken = useSelector((state) => state.memberReducer.refreshToken);
-  // const BASE_URL = "http://localhost:8080";
-  const localBaseUrl = "http://localhost:8080";
-  // const devBaseUrl = "https://app.testsvc-avl87.store";
-  const devBaseUrl = "http://localhost:8080";
+  const devBaseUrl = process.env.REACT_APP_API_BASE_URL;
   const API_PREFIX = devBaseUrl + "/api/v1";
   const EXPIRED_ERROR_CODE = "ERR_AUTH_005";
   const AUTHORIZATION_HEADER = {
@@ -23,6 +20,16 @@ const MainPage = () => {
   const INVALID_AUTHORIZATION_HEADER = {
     headers: {
       Authorization: `Beare ${accessToken}`,
+    },
+  };
+
+  const EMPTY_AUTHORIZATION_HEADER = {
+    headers: {
+      Authorization: "",
+    },
+  };
+  const EMPTY_HEADER = {
+    headers: {
     },
   };
 
@@ -75,19 +82,18 @@ const MainPage = () => {
   function handleLogout() {
     axios
       .post(
-        "http://localhost:8080/api/v1/members/logout",
+        API_PREFIX + "/auth/logout",
         {},
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        AUTHORIZATION_HEADER
       )
       .then(({ data }) => {
         console.log(data);
+        dispatch(
+          memberLogout()
+        );
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.response.data);
       });
   }
 
@@ -129,6 +135,21 @@ const MainPage = () => {
     })
   }
 
+  function handleReIssueAPI() {
+    axios.post(
+      API_PREFIX + "/auth/reissue",
+      {
+        refreshToken: refreshToken,
+      },
+    )
+    .then(({data}) => {
+      console.log(data);
+    })
+    .catch(({response}) => {
+      console.log(response.data);
+    })
+  }
+
   return (
     <div>
       <h1>Main Page 입니다.</h1>
@@ -144,6 +165,7 @@ const MainPage = () => {
       <div onClick={handleSamplePostAPI}>testPostAPI</div>
       <div onClick={handleSampleErrorAPI}>testErrorAPI</div>
       <div onClick={handleAuthReqAPI}>testAuthReqAPI</div>
+      <div onClick={handleReIssueAPI}>testReIssueAPI</div>
     </div>
   );
 };
